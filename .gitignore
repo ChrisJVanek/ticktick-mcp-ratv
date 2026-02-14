@@ -1,0 +1,7 @@
+node_modules/
+build/
+.env
+*.tgz
+.DS_Store
+*.log
+.token-cache.json

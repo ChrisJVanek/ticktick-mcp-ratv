@@ -1,0 +1,55 @@
+{
+  "name": "ticktick-mcp-server",
+  "version": "1.0.0",
+  "description": "A comprehensive MCP (Model Context Protocol) server for TickTick task management. Integrates with Claude Code, Cursor, VS Code, and other MCP-compatible AI clients.",
+  "type": "module",
+  "main": "./build/index.js",
+  "bin": {
+    "ticktick-mcp-server": "./build/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "start": "node build/index.js",
+    "auth": "node build/auth.js",
+    "lint": "eslint src/",
+    "clean": "rm -rf build",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "mcp",
+    "ticktick",
+    "dida365",
+    "model-context-protocol",
+    "claude",
+    "cursor",
+    "vscode",
+    "ai",
+    "task-management",
+    "productivity",
+    "todo"
+  ],
+  "author": "",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/chrisvanek/ticktick-mcp-ratv"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "files": [
+    "build",
+    "README.md",
+    "LICENSE"
+  ],
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.12.1",
+    "open": "^10.1.0",
+    "zod": "^3.24.2"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.4",
+    "typescript": "^5.7.3"
+  }
+}
