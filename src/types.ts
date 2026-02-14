@@ -1,5 +1,7 @@
 /**
- * TickTick API type definitions based on the official Open API v1.
+ * TickTick API type definitions.
+ *
+ * Covers both the official Open API v1 and the undocumented V2 API.
  * https://developer.ticktick.com/docs/index.html#/openapi
  */
 
@@ -38,6 +40,10 @@ export interface Task {
   completedTime?: string;
   items?: ChecklistItem[];
   kind?: string;
+  tags?: string[];
+  pinned?: boolean;
+  parentId?: string;
+  childIds?: string[];
 }
 
 export interface CreateTaskInput {
@@ -124,6 +130,144 @@ export interface ProjectData {
 }
 
 // ---------------------------------------------------------------------------
+// Tag (V2 API)
+// ---------------------------------------------------------------------------
+export interface Tag {
+  name: string;
+  label?: string;
+  sortOrder?: number;
+  sortType?: string;
+  color?: string;
+  etag?: string;
+  type?: string;
+  rawName?: string;
+}
+
+// ---------------------------------------------------------------------------
+// Project Group / Folder (V2 API)
+// ---------------------------------------------------------------------------
+export interface ProjectGroup {
+  id: string;
+  etag?: string;
+  name: string;
+  sortOrder?: number;
+  viewMode?: string;
+  deleted?: number;
+  userId?: number;
+  showAll?: boolean;
+  sortType?: string;
+  teamId?: string;
+}
+
+// ---------------------------------------------------------------------------
+// Habit (V2 API)
+// ---------------------------------------------------------------------------
+export interface Habit {
+  id: string;
+  name: string;
+  color?: string;
+  iconRes?: string;
+  sortOrder?: number;
+  status?: number; // 0 = active, 2 = archived
+  encouragement?: string;
+  frequency?: string;
+  type?: string;
+  goal?: number;
+  step?: number;
+  unit?: string;
+  sectionId?: string;
+  repeatRule?: string;
+  reminders?: string[];
+  startDate?: string;
+  targetDays?: number;
+  targetStartDate?: string;
+  totalCheckIns?: number;
+  createdTime?: string;
+  modifiedTime?: string;
+  etag?: string;
+}
+
+export interface HabitCheckin {
+  id?: string;
+  habitId: string;
+  checkinTime: string; // yyyy-MM-dd'T'HH:mm:ssZ
+  checkinStamp?: string; // yyyyMMdd
+  status?: number;
+  value?: number;
+  goal?: number;
+  opTime?: string;
+}
+
+export interface HabitSection {
+  id: string;
+  name: string;
+  sortOrder?: number;
+  children?: string[];
+  isSystemSection?: boolean;
+}
+
+// ---------------------------------------------------------------------------
+// Focus / Pomodoro (V2 API)
+// ---------------------------------------------------------------------------
+export interface FocusRecord {
+  date: string;
+  pomodoroCount?: number;
+  pomodoroTime?: number;
+  stopwatchTime?: number;
+  totalTime?: number;
+}
+
+export interface FocusDistribution {
+  name?: string;
+  color?: string;
+  totalTime?: number;
+  pomodoroTime?: number;
+  stopwatchTime?: number;
+}
+
+// ---------------------------------------------------------------------------
+// Productivity Stats (V2 API)
+// ---------------------------------------------------------------------------
+export interface ProductivityStats {
+  score?: number;
+  completedCount?: number;
+  createdCount?: number;
+  pomodoroCount?: number;
+  pomodoroDuration?: number;
+  habitCheckInCount?: number;
+  [key: string]: unknown;
+}
+
+// ---------------------------------------------------------------------------
+// User Profile (V2 API)
+// ---------------------------------------------------------------------------
+export interface UserProfile {
+  username?: string;
+  name?: string;
+  email?: string;
+  timeZone?: string;
+  inboxId?: string;
+  isPro?: boolean;
+  createdDate?: string;
+  [key: string]: unknown;
+}
+
+// ---------------------------------------------------------------------------
+// V2 Batch Sync response
+// ---------------------------------------------------------------------------
+export interface BatchCheckResponse {
+  syncTaskBean?: {
+    update?: Task[];
+    delete?: string[];
+  };
+  projectProfiles?: Project[];
+  projectGroups?: ProjectGroup[];
+  tags?: Tag[];
+  inboxId?: string;
+  [key: string]: unknown;
+}
+
+// ---------------------------------------------------------------------------
 // OAuth tokens
 // ---------------------------------------------------------------------------
 export interface TokenData {
@@ -132,6 +276,17 @@ export interface TokenData {
   token_type?: string;
   expires_in?: number;
   scope?: string;
+}
+
+// ---------------------------------------------------------------------------
+// V2 Session token
+// ---------------------------------------------------------------------------
+export interface SessionLoginResponse {
+  token: string;
+  userId?: string;
+  username?: string;
+  inboxId?: string;
+  [key: string]: unknown;
 }
 
 // ---------------------------------------------------------------------------
@@ -145,4 +300,7 @@ export interface ServerConfig {
   accessToken: string;
   refreshToken?: string;
   host: TickTickHost;
+  // V2 auth (session-based)
+  username: string;
+  password: string;
 }

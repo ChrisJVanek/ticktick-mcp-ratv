@@ -45,6 +45,7 @@ export async function runOAuthFlow(opts: {
   clientSecret: string;
   host: TickTickHost;
   envPath?: string;
+  extraVars?: Record<string, string>;
 }): Promise<AuthResult> {
   const { clientId, clientSecret, host } = opts;
   const state = crypto.randomBytes(16).toString("hex");
@@ -96,6 +97,7 @@ export async function runOAuthFlow(opts: {
       TICKTICK_ACCESS_TOKEN: data.access_token,
       TICKTICK_REFRESH_TOKEN: data.refresh_token ?? "",
       TICKTICK_HOST: host,
+      ...(opts.extraVars ?? {}),
     });
   }
 

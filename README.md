@@ -10,17 +10,25 @@ Also supports **Dida365** (滴答清单), the Chinese version of TickTick.
 
 ## Features
 
-**25 tools** covering everything the TickTick Open API offers, plus smart productivity helpers:
+**44 tools** across two API layers for maximum TickTick coverage:
 
-| Category | Tools |
-|----------|-------|
-| **Projects** | List, get, create, update, delete projects |
-| **Tasks** | Get, create, update, complete, delete tasks, batch create |
-| **Smart Queries** | Tasks due today/tomorrow/this week/in N days, overdue tasks |
-| **Search** | Full-text search across all tasks |
-| **Filtering** | Advanced multi-criteria filtering (project, priority, dates, text) |
-| **GTD** | Engaged tasks, next tasks (Getting Things Done methodology) |
-| **Productivity** | Daily summary/digest for morning planning |
+| Category | Tools | API |
+|----------|-------|-----|
+| **Projects** | List, get, create, update, delete projects | V1 |
+| **Tasks** | Get, create, update, complete, delete, batch create | V1 |
+| **Smart Queries** | Due today/tomorrow/this week/N days, overdue | V1 |
+| **Search & Filter** | Full-text search, advanced multi-criteria filtering | V1 |
+| **GTD** | Engaged tasks, next tasks (Getting Things Done) | V1 |
+| **Productivity** | Daily summary/digest for morning planning | V1 |
+| **Tags** | List, create, rename, delete, merge tags | V2 |
+| **Habits** | List, create, delete, check-in, history | V2 |
+| **Focus/Pomodoro** | Focus heatmap, distribution by tag, productivity stats | V2 |
+| **Completed Tasks** | View finished tasks with date range filtering | V2 |
+| **Kanban Columns** | List, create, delete columns | V2 |
+| **Project Folders** | List, create, delete project groups | V2 |
+| **Task Hierarchy** | Move tasks between projects, set parent/subtask | V2 |
+| **User Profile** | Profile info, account settings | V2 |
+| **Trashed Tasks** | View and recover deleted tasks | V2 |
 
 ---
 
@@ -46,14 +54,16 @@ npm install
 # Build
 npm run build
 
-# Run the authentication wizard
+# Run the dual authentication wizard
 node build/index.js auth
 ```
 
-The auth wizard will:
-- Ask for your Client ID and Client Secret
-- Open your browser to authorize the app
-- Save tokens to a `.env` file in the project directory
+The auth wizard collects **two** sets of credentials:
+
+1. **TickTick login** (email + password) — for V2 API features (tags, habits, focus, completed tasks)
+2. **OAuth2 app** (Client ID + Secret + browser authorization) — for V1 API features (projects, tasks CRUD)
+
+All credentials are saved to a `.env` file.
 
 ### 3. Add to Your AI Client
 
@@ -74,6 +84,8 @@ claude mcp add ticktick-mcp-server \
   -e TICKTICK_CLIENT_SECRET=your_client_secret \
   -e TICKTICK_ACCESS_TOKEN=your_access_token \
   -e TICKTICK_REFRESH_TOKEN=your_refresh_token \
+  -e TICKTICK_USERNAME=your_email \
+  -e TICKTICK_PASSWORD=your_password \
   -s user
 ```
 
@@ -96,7 +108,9 @@ Add to `~/.claude.json` (global) or `.mcp.json` (project):
         "TICKTICK_CLIENT_ID": "your_client_id",
         "TICKTICK_CLIENT_SECRET": "your_client_secret",
         "TICKTICK_ACCESS_TOKEN": "your_access_token",
-        "TICKTICK_REFRESH_TOKEN": "your_refresh_token"
+        "TICKTICK_REFRESH_TOKEN": "your_refresh_token",
+        "TICKTICK_USERNAME": "your_email",
+        "TICKTICK_PASSWORD": "your_password"
       }
     }
   }
@@ -131,7 +145,9 @@ Create or edit `~/.cursor/mcp.json` (global) or `.cursor/mcp.json` (project-leve
         "TICKTICK_CLIENT_ID": "your_client_id",
         "TICKTICK_CLIENT_SECRET": "your_client_secret",
         "TICKTICK_ACCESS_TOKEN": "your_access_token",
-        "TICKTICK_REFRESH_TOKEN": "your_refresh_token"
+        "TICKTICK_REFRESH_TOKEN": "your_refresh_token",
+        "TICKTICK_USERNAME": "your_email",
+        "TICKTICK_PASSWORD": "your_password"
       }
     }
   }
@@ -160,7 +176,9 @@ Create `.vscode/mcp.json` in your project root:
         "TICKTICK_CLIENT_ID": "your_client_id",
         "TICKTICK_CLIENT_SECRET": "your_client_secret",
         "TICKTICK_ACCESS_TOKEN": "your_access_token",
-        "TICKTICK_REFRESH_TOKEN": "your_refresh_token"
+        "TICKTICK_REFRESH_TOKEN": "your_refresh_token",
+        "TICKTICK_USERNAME": "your_email",
+        "TICKTICK_PASSWORD": "your_password"
       }
     }
   }
@@ -182,7 +200,9 @@ Add to your VS Code `settings.json`:
           "TICKTICK_CLIENT_ID": "your_client_id",
           "TICKTICK_CLIENT_SECRET": "your_client_secret",
           "TICKTICK_ACCESS_TOKEN": "your_access_token",
-          "TICKTICK_REFRESH_TOKEN": "your_refresh_token"
+          "TICKTICK_REFRESH_TOKEN": "your_refresh_token",
+          "TICKTICK_USERNAME": "your_email",
+          "TICKTICK_PASSWORD": "your_password"
         }
       }
     }
@@ -209,7 +229,9 @@ Add to your VS Code `settings.json`:
         "TICKTICK_CLIENT_ID": "your_client_id",
         "TICKTICK_CLIENT_SECRET": "your_client_secret",
         "TICKTICK_ACCESS_TOKEN": "your_access_token",
-        "TICKTICK_REFRESH_TOKEN": "your_refresh_token"
+        "TICKTICK_REFRESH_TOKEN": "your_refresh_token",
+        "TICKTICK_USERNAME": "your_email",
+        "TICKTICK_PASSWORD": "your_password"
       }
     }
   }
@@ -234,7 +256,9 @@ Edit the config file:
         "TICKTICK_CLIENT_ID": "your_client_id",
         "TICKTICK_CLIENT_SECRET": "your_client_secret",
         "TICKTICK_ACCESS_TOKEN": "your_access_token",
-        "TICKTICK_REFRESH_TOKEN": "your_refresh_token"
+        "TICKTICK_REFRESH_TOKEN": "your_refresh_token",
+        "TICKTICK_USERNAME": "your_email",
+        "TICKTICK_PASSWORD": "your_password"
       }
     }
   }
@@ -257,9 +281,9 @@ This routes all API calls to `api.dida365.com` and auth calls to `dida365.com`. 
 
 ---
 
-## All Available Tools
+## All Available Tools (44)
 
-### Project Management
+### Project Management (V1 API)
 
 | Tool | Description |
 |------|-------------|
@@ -270,7 +294,7 @@ This routes all API calls to `api.dida365.com` and auth calls to `dida365.com`. 
 | `ticktick_update_project` | Update project name, color, view mode |
 | `ticktick_delete_project` | Delete a project |
 
-### Task Management
+### Task Management (V1 API)
 
 | Tool | Description |
 |------|-------------|
@@ -281,7 +305,7 @@ This routes all API calls to `api.dida365.com` and auth calls to `dida365.com`. 
 | `ticktick_delete_task` | Delete a task |
 | `ticktick_batch_create_tasks` | Create multiple tasks at once |
 
-### Smart Queries
+### Smart Queries (V1 API)
 
 | Tool | Description |
 |------|-------------|
@@ -295,13 +319,79 @@ This routes all API calls to `api.dida365.com` and auth calls to `dida365.com`. 
 | `ticktick_get_tasks_by_priority` | Filter by priority level |
 | `ticktick_filter_tasks` | Advanced multi-criteria filtering |
 
-### Productivity & GTD
+### Productivity & GTD (V1 API)
 
 | Tool | Description |
 |------|-------------|
 | `ticktick_get_engaged_tasks` | GTD "Engage" — high priority, overdue, or due today |
 | `ticktick_get_next_tasks` | GTD "Next" — medium priority or due tomorrow |
 | `ticktick_daily_summary` | Full daily digest with overdue, today, tomorrow, and priority breakdown |
+
+### Tags (V2 API)
+
+| Tool | Description |
+|------|-------------|
+| `ticktick_get_tags` | List all tags with colors |
+| `ticktick_create_tag` | Create a new tag |
+| `ticktick_rename_tag` | Rename a tag (updates all tagged tasks) |
+| `ticktick_delete_tag` | Delete a tag |
+| `ticktick_merge_tags` | Merge one tag into another |
+
+### Habits (V2 API)
+
+| Tool | Description |
+|------|-------------|
+| `ticktick_get_habits` | List all habits |
+| `ticktick_get_habit_sections` | Get habit sections (Morning/Afternoon/Evening) |
+| `ticktick_create_habit` | Create a new habit with goal, unit, frequency |
+| `ticktick_delete_habit` | Delete a habit |
+| `ticktick_checkin_habit` | Record a habit check-in |
+| `ticktick_get_habit_checkins` | Get check-in history for habits |
+
+### Focus / Pomodoro (V2 API)
+
+| Tool | Description |
+|------|-------------|
+| `ticktick_get_focus_heatmap` | Focus time heatmap over a date range |
+| `ticktick_get_focus_distribution` | Focus time breakdown by tag/category |
+| `ticktick_get_productivity_stats` | Overall productivity score and stats |
+
+### Completed & Trashed Tasks (V2 API)
+
+| Tool | Description |
+|------|-------------|
+| `ticktick_get_completed_tasks` | View completed tasks with date range filter |
+| `ticktick_get_trashed_tasks` | View deleted/trashed tasks for recovery |
+
+### Task Organization (V2 API)
+
+| Tool | Description |
+|------|-------------|
+| `ticktick_move_task` | Move a task between projects |
+| `ticktick_set_task_parent` | Make a task a subtask of another (or remove parent) |
+
+### Kanban Columns (V2 API)
+
+| Tool | Description |
+|------|-------------|
+| `ticktick_get_columns` | List columns for a kanban project |
+| `ticktick_create_column` | Add a column to a kanban project |
+| `ticktick_delete_column` | Delete a column |
+
+### Project Folders (V2 API)
+
+| Tool | Description |
+|------|-------------|
+| `ticktick_get_project_folders` | List all project folders/groups |
+| `ticktick_create_project_folder` | Create a folder to organize projects |
+| `ticktick_delete_project_folder` | Delete a project folder |
+
+### User & Settings (V2 API)
+
+| Tool | Description |
+|------|-------------|
+| `ticktick_get_user_profile` | Your profile, email, timezone, subscription status |
+| `ticktick_get_user_settings` | Account preferences and settings |
 
 ---
 
@@ -331,6 +421,26 @@ Once configured, you can use natural language with your AI assistant:
 
 **Batch operations:**
 > "Create these tasks in my Work project: Review design mockups, Update API docs, Fix login bug"
+
+**Tags:**
+> "Show me all my tags"
+> "Create a tag called 'urgent' with a red color"
+> "Merge the 'bug' tag into 'bugfix'"
+
+**Habits & Focus:**
+> "What habits do I have?"
+> "Check in my 'Drink water' habit for today"
+> "Show my focus time heatmap for this month"
+> "What are my productivity stats?"
+
+**Completed & Trashed Tasks:**
+> "Show me tasks I completed last week"
+> "What's in my trash?"
+
+**Organization:**
+> "Move the 'Design review' task to my Work project"
+> "Make 'Write tests' a subtask of 'Ship v2'"
+> "List my project folders"
 
 ---
 
@@ -377,22 +487,29 @@ RRULE:FREQ=MONTHLY;INTERVAL=1          (every month)
 ```
 src/
 ├── index.ts              # Entry point — MCP server + auth CLI routing
-├── auth-cli.ts           # Interactive OAuth2 setup wizard
-├── client.ts             # TickTick API HTTP client with auto token refresh
+├── auth-cli.ts           # Interactive dual-auth setup wizard
+├── client.ts             # V1 API client (OAuth2, auto token refresh)
+├── client-v2.ts          # V2 API client (session auth, auto re-login)
 ├── config.ts             # Environment variable loader
-├── types.ts              # TypeScript interfaces for the API
+├── types.ts              # TypeScript interfaces for both APIs
 ├── auth/
 │   └── oauth.ts          # OAuth2 authorization code flow
 └── tools/
-    ├── project-tools.ts  # 6 project management tools
-    ├── task-tools.ts     # 6 task CRUD tools
-    └── smart-tools.ts    # 13 smart query & productivity tools
+    ├── project-tools.ts  # 6 project management tools (V1)
+    ├── task-tools.ts     # 6 task CRUD tools (V1)
+    ├── smart-tools.ts    # 13 smart query & productivity tools (V1)
+    ├── tag-tools.ts      # 5 tag management tools (V2)
+    ├── habit-tools.ts    # 6 habit tracking tools (V2)
+    ├── focus-tools.ts    # 3 focus/pomodoro tools (V2)
+    ├── column-tools.ts   # 3 kanban column tools (V2)
+    ├── folder-tools.ts   # 3 project folder tools (V2)
+    └── v2-task-tools.ts  # 6 completed tasks, trash, move, user (V2)
 ```
 
 Key design decisions:
 - **TypeScript** — full type safety, compiles to ESM
-- **Official API only** — uses the TickTick Open API v1, no unofficial/internal endpoints
-- **Auto token refresh** — seamlessly refreshes expired tokens on 401 responses
+- **Dual API coverage** — V1 (Official Open API) for core CRUD + V2 (internal API) for advanced features
+- **Auto token refresh** — V1 refreshes OAuth tokens, V2 re-authenticates sessions, both on 401
 - **Zero runtime config files** — all config via environment variables
 - **Modular tools** — each category in its own file for easy extension
 
