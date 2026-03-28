@@ -235,18 +235,93 @@ If `node` doesn't resolve in your MCP client, use the full path:
 
 ## Usage Examples
 
-Once connected, just talk naturally:
+Once connected, just talk naturally. Here are examples organized by what you can do:
 
-```
-"Give me my daily summary"
-"What's overdue?"
-"Create a task called 'Review PR #42' in Work, due tomorrow, high priority"
-"Show me all high priority tasks"
-"Search for tasks mentioning 'budget'"
-"Check in my 'Drink water' habit for today"
-"Show my focus time heatmap for this month"
-"Move 'Design review' to my Work project"
-```
+### Morning Planning
+
+> "Give me my daily summary"
+
+> "What's overdue?"
+
+> "What do I have due this week?"
+
+> "Show me all high priority tasks"
+
+### Creating Tasks
+
+> "Create a task called 'Review PR #42' in my Work project, due tomorrow, high priority"
+
+> "Add a task 'Buy groceries' to Personal with subtasks: milk, eggs, bread, butter"
+
+> "Create a recurring task 'Weekly standup notes' every Monday in my Work project"
+
+> "Create these tasks in my Work project: Review design mockups, Update API docs, Fix login bug"
+
+### Managing Tasks
+
+> "Mark the 'Send invoice' task as complete"
+
+> "Move 'Design review' to my Work project"
+
+> "Make 'Write tests' a subtask of 'Ship v2'"
+
+> "What tasks did I complete last week?"
+
+### Search & Filter
+
+> "Search for any tasks mentioning 'budget'"
+
+> "Show me all medium priority tasks"
+
+> "What tasks are due in the next 3 days?"
+
+> "Show me all tasks in my Personal project that have a due date"
+
+### Projects
+
+> "List all my projects"
+
+> "Create a new project called 'Q2 Goals' with a kanban view"
+
+> "Show me everything in my Work project — tasks, columns, the works"
+
+### Tags
+
+> "Show me all my tags"
+
+> "Create a tag called 'urgent' with a red color"
+
+> "Rename the 'bug' tag to 'bugfix'"
+
+> "Merge the 'todo' tag into 'backlog'"
+
+### Habits
+
+> "What habits do I have?"
+
+> "Check in my 'Drink water' habit for today"
+
+> "Create a habit called 'Read' with a goal of 30 pages per day"
+
+> "Show my check-in history for all habits since January"
+
+### Focus & Productivity
+
+> "Show my focus time heatmap for this month"
+
+> "How is my focus time distributed across tags?"
+
+> "What are my productivity stats?"
+
+### Organization
+
+> "List my project folders"
+
+> "Create a folder called 'Side Projects'"
+
+> "Show the kanban columns in my Sprint project"
+
+> "What's in my trash?"
 
 ---
 
