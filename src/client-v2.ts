@@ -25,6 +25,18 @@ import type {
 } from "./types.js";
 
 // ---------------------------------------------------------------------------
+// Validation helpers
+// ---------------------------------------------------------------------------
+
+/** Ensure a value is safe to interpolate into a URL path segment. */
+function validatePathSegment(value: string, name: string): string {
+  if (!value || /[\/\\?#]/.test(value)) {
+    throw new Error(`Invalid ${name}: must not be empty or contain path separators`);
+  }
+  return encodeURIComponent(value);
+}
+
+// ---------------------------------------------------------------------------
 // URL helpers
 // ---------------------------------------------------------------------------
 
@@ -175,7 +187,8 @@ export class TickTickV2Client {
 
   /** Delete a tag. */
   async deleteTag(name: string): Promise<unknown> {
-    return this.request("DELETE", `/tag/${encodeURIComponent(name)}`);
+    const safeName = validatePathSegment(name, "tagName");
+    return this.request("DELETE", `/tag/${safeName}`);
   }
 
   /** Merge two tags. */
@@ -252,7 +265,8 @@ export class TickTickV2Client {
 
   /** Get columns for a kanban project. */
   async getColumns(projectId: string): Promise<Column[]> {
-    return this.request<Column[]>("GET", `/column/project/${projectId}`);
+    const pid = validatePathSegment(projectId, "projectId");
+    return this.request<Column[]>("GET", `/column/project/${pid}`);
   }
 
   /** Create a column. */
@@ -376,17 +390,21 @@ export class TickTickV2Client {
 
   /** Get focus time heatmap for a date range. */
   async getFocusHeatmap(from: string, to: string): Promise<FocusRecord[]> {
+    const f = validatePathSegment(from, "from");
+    const t = validatePathSegment(to, "to");
     return this.request<FocusRecord[]>(
       "GET",
-      `/pomodoros/statistics/heatmap/${from}/${to}`,
+      `/pomodoros/statistics/heatmap/${f}/${t}`,
     );
   }
 
   /** Get focus time distribution by tag. */
   async getFocusDistribution(from: string, to: string): Promise<FocusDistribution[]> {
+    const f = validatePathSegment(from, "from");
+    const t = validatePathSegment(to, "to");
     return this.request<FocusDistribution[]>(
       "GET",
-      `/pomodoros/statistics/dist/${from}/${to}`,
+      `/pomodoros/statistics/dist/${f}/${t}`,
     );
   }
 

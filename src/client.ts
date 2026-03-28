@@ -18,6 +18,18 @@ import type {
 } from "./types.js";
 
 // ---------------------------------------------------------------------------
+// Validation helpers
+// ---------------------------------------------------------------------------
+
+/** Ensure a value is safe to interpolate into a URL path segment. */
+function validatePathSegment(value: string, name: string): string {
+  if (!value || /[\/\\?#]/.test(value)) {
+    throw new Error(`Invalid ${name}: must not be empty or contain path separators`);
+  }
+  return encodeURIComponent(value);
+}
+
+// ---------------------------------------------------------------------------
 // URL helpers
 // ---------------------------------------------------------------------------
 
@@ -145,12 +157,14 @@ export class TickTickClient {
 
   /** GET /project/{id} – Get single project */
   async getProject(projectId: string): Promise<Project> {
-    return this.request<Project>("GET", `/project/${projectId}`);
+    const pid = validatePathSegment(projectId, "projectId");
+    return this.request<Project>("GET", `/project/${pid}`);
   }
 
   /** GET /project/{id}/data – Get project with its undone tasks and columns */
   async getProjectData(projectId: string): Promise<ProjectData> {
-    return this.request<ProjectData>("GET", `/project/${projectId}/data`);
+    const pid = validatePathSegment(projectId, "projectId");
+    return this.request<ProjectData>("GET", `/project/${pid}/data`);
   }
 
   /** POST /project – Create project */
@@ -163,12 +177,14 @@ export class TickTickClient {
     projectId: string,
     input: UpdateProjectInput,
   ): Promise<Project> {
-    return this.request<Project>("POST", `/project/${projectId}`, input);
+    const pid = validatePathSegment(projectId, "projectId");
+    return this.request<Project>("POST", `/project/${pid}`, input);
   }
 
   /** DELETE /project/{id} – Delete project */
   async deleteProject(projectId: string): Promise<void> {
-    return this.request<void>("DELETE", `/project/${projectId}`);
+    const pid = validatePathSegment(projectId, "projectId");
+    return this.request<void>("DELETE", `/project/${pid}`);
   }
 
   // -------------------------------------------------------------------------
@@ -177,7 +193,9 @@ export class TickTickClient {
 
   /** GET /project/{pid}/task/{tid} – Get single task */
   async getTask(projectId: string, taskId: string): Promise<Task> {
-    return this.request<Task>("GET", `/project/${projectId}/task/${taskId}`);
+    const pid = validatePathSegment(projectId, "projectId");
+    const tid = validatePathSegment(taskId, "taskId");
+    return this.request<Task>("GET", `/project/${pid}/task/${tid}`);
   }
 
   /** POST /task – Create task */
@@ -187,22 +205,27 @@ export class TickTickClient {
 
   /** POST /task/{id} – Update task */
   async updateTask(input: UpdateTaskInput): Promise<Task> {
-    return this.request<Task>("POST", `/task/${input.id}`, input);
+    const tid = validatePathSegment(input.id, "taskId");
+    return this.request<Task>("POST", `/task/${tid}`, input);
   }
 
   /** POST /project/{pid}/task/{tid}/complete – Complete task */
   async completeTask(projectId: string, taskId: string): Promise<void> {
+    const pid = validatePathSegment(projectId, "projectId");
+    const tid = validatePathSegment(taskId, "taskId");
     return this.request<void>(
       "POST",
-      `/project/${projectId}/task/${taskId}/complete`,
+      `/project/${pid}/task/${tid}/complete`,
     );
   }
 
   /** DELETE /project/{pid}/task/{tid} – Delete task */
   async deleteTask(projectId: string, taskId: string): Promise<void> {
+    const pid = validatePathSegment(projectId, "projectId");
+    const tid = validatePathSegment(taskId, "taskId");
     return this.request<void>(
       "DELETE",
-      `/project/${projectId}/task/${taskId}`,
+      `/project/${pid}/task/${tid}`,
     );
   }
 

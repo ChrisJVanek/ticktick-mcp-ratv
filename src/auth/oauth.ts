@@ -207,6 +207,6 @@ function writeEnv(envPath: string, vars: Record<string, string>): void {
   const lines = Object.entries(merged)
     .map(([k, v]) => `${k}=${v}`)
     .join("\n");
-  fs.writeFileSync(envPath, lines + "\n", "utf-8");
+  fs.writeFileSync(envPath, lines + "\n", { encoding: "utf-8", mode: 0o600 });
   console.error(`  Tokens saved to ${envPath}`);
 }
