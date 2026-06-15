@@ -13,7 +13,7 @@ Also supports **Dida365** (the Chinese version of TickTick).
 
 ## Features
 
-**44 tools** across two API layers:
+**50 tools** across two API layers:
 
 | Category | Tools | API |
 |----------|-------|-----|
@@ -79,6 +79,7 @@ claude mcp add ticktick-mcp-server \
   -e TICKTICK_REFRESH_TOKEN=your_refresh_token \
   -e TICKTICK_USERNAME=your_email \
   -e TICKTICK_PASSWORD=your_password \
+  -e TICKTICK_DEVICE_ID=your_device_id \
   -s user
 ```
 
@@ -98,7 +99,8 @@ Use `-s user` (available everywhere), `-s project` (shared with team), or `-s lo
         "TICKTICK_ACCESS_TOKEN": "your_access_token",
         "TICKTICK_REFRESH_TOKEN": "your_refresh_token",
         "TICKTICK_USERNAME": "your_email",
-        "TICKTICK_PASSWORD": "your_password"
+        "TICKTICK_PASSWORD": "your_password",
+        "TICKTICK_DEVICE_ID": "your_device_id"
       }
     }
   }
@@ -126,7 +128,8 @@ Create or edit `~/.cursor/mcp.json` (global) or `.cursor/mcp.json` (project):
         "TICKTICK_ACCESS_TOKEN": "your_access_token",
         "TICKTICK_REFRESH_TOKEN": "your_refresh_token",
         "TICKTICK_USERNAME": "your_email",
-        "TICKTICK_PASSWORD": "your_password"
+        "TICKTICK_PASSWORD": "your_password",
+        "TICKTICK_DEVICE_ID": "your_device_id"
       }
     }
   }
@@ -154,7 +157,8 @@ Requires VS Code 1.99+ with GitHub Copilot. Create `.vscode/mcp.json`:
         "TICKTICK_ACCESS_TOKEN": "your_access_token",
         "TICKTICK_REFRESH_TOKEN": "your_refresh_token",
         "TICKTICK_USERNAME": "your_email",
-        "TICKTICK_PASSWORD": "your_password"
+        "TICKTICK_PASSWORD": "your_password",
+        "TICKTICK_DEVICE_ID": "your_device_id"
       }
     }
   }
@@ -182,7 +186,8 @@ Edit the config file:
         "TICKTICK_ACCESS_TOKEN": "your_access_token",
         "TICKTICK_REFRESH_TOKEN": "your_refresh_token",
         "TICKTICK_USERNAME": "your_email",
-        "TICKTICK_PASSWORD": "your_password"
+        "TICKTICK_PASSWORD": "your_password",
+        "TICKTICK_DEVICE_ID": "your_device_id"
       }
     }
   }
@@ -210,7 +215,8 @@ Open the Cline panel > MCP Servers icon > Configure, then add:
         "TICKTICK_ACCESS_TOKEN": "your_access_token",
         "TICKTICK_REFRESH_TOKEN": "your_refresh_token",
         "TICKTICK_USERNAME": "your_email",
-        "TICKTICK_PASSWORD": "your_password"
+        "TICKTICK_PASSWORD": "your_password",
+        "TICKTICK_DEVICE_ID": "your_device_id"
       }
     }
   }
@@ -335,13 +341,16 @@ Once connected, just talk naturally. Here are examples organized by what you can
 | `TICKTICK_REFRESH_TOKEN` | No | OAuth2 refresh token (enables auto-renewal) |
 | `TICKTICK_USERNAME` | Yes | Your TickTick email (for V2 API) |
 | `TICKTICK_PASSWORD` | Yes | Your TickTick password (for V2 API) |
+| `TICKTICK_DEVICE_ID` | Recommended | Stable 24-char hex device id for the V2 `x-device` header (see note below) |
 | `TICKTICK_HOST` | No | `ticktick` (default) or `dida365` for China |
 
 > **Security note:** The V2 API requires your TickTick username and password. These are stored as environment variables and never logged or transmitted anywhere except directly to TickTick's authentication endpoint. The `.env` file is created with restricted permissions (owner-only read/write).
 
+> **About `TICKTICK_DEVICE_ID`:** The V2 internal API authenticates a "device" via the `x-device` request header. If the device id is empty or unrecognized, TickTick rejects the login with a **misleading `username_password_not_match` error** — even when your credentials are correct. The server sends a non-empty device id to avoid this. If you don't set `TICKTICK_DEVICE_ID`, a random 24-character hex id is generated automatically on each launch; setting a **stable** value is recommended so TickTick doesn't treat every restart as a brand-new device. Any 24-char hex string works — or reuse the id your TickTick web client already uses (browser DevTools → Application → Local Storage → `deviceAnalyticsData.id`).
+
 ---
 
-## All 44 Tools
+## All 50 Tools
 
 <details>
 <summary><strong>Project Management</strong> (6 tools, V1)</summary>
@@ -372,7 +381,7 @@ Once connected, just talk naturally. Here are examples organized by what you can
 </details>
 
 <details>
-<summary><strong>Smart Queries & GTD</strong> (13 tools, V1)</summary>
+<summary><strong>Smart Queries & GTD</strong> (12 tools, V1)</summary>
 
 | Tool | Description |
 |------|-------------|
