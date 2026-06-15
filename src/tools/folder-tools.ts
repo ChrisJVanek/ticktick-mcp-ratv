@@ -73,4 +73,35 @@ export function registerFolderTools(
       };
     },
   );
+
+  server.registerTool(
+    "ticktick_move_project_to_folder",
+    {
+      title: "Move List into Folder",
+      description:
+        "Move a project (list) into a folder, or remove it from its folder. Pass a folder_id to move it in; pass an empty string (or \"NONE\") to take it out of any folder. Use ticktick_get_project_folders to find folder IDs.",
+      inputSchema: {
+        project_id: z.string().describe("Project (list) ID to move"),
+        folder_id: z
+          .string()
+          .describe(
+            'Destination folder ID, or "NONE"/empty string to remove the list from its folder',
+          ),
+      },
+    },
+    async ({ project_id, folder_id }) => {
+      await getV2().moveProjectToFolder(project_id, folder_id);
+      const removed = !folder_id || folder_id === "NONE";
+      return {
+        content: [
+          {
+            type: "text",
+            text: removed
+              ? `List ${project_id} removed from its folder.`
+              : `List ${project_id} moved into folder ${folder_id}.`,
+          },
+        ],
+      };
+    },
+  );
 }

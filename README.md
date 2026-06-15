@@ -13,7 +13,7 @@ Also supports **Dida365** (the Chinese version of TickTick).
 
 ## Features
 
-**50 tools** across two API layers:
+**52 tools** across two API layers:
 
 | Category | Tools | API |
 |----------|-------|-----|
@@ -350,7 +350,7 @@ Once connected, just talk naturally. Here are examples organized by what you can
 
 ---
 
-## All 50 Tools
+## All 52 Tools
 
 <details>
 <summary><strong>Project Management</strong> (6 tools, V1)</summary>
@@ -459,16 +459,18 @@ Once connected, just talk naturally. Here are examples organized by what you can
 </details>
 
 <details>
-<summary><strong>Kanban & Folders</strong> (6 tools, V2)</summary>
+<summary><strong>Kanban & Folders</strong> (8 tools, V2)</summary>
 
 | Tool | Description |
 |------|-------------|
 | `ticktick_get_columns` | List kanban columns |
 | `ticktick_create_column` | Create a column |
 | `ticktick_delete_column` | Delete a column |
+| `ticktick_move_task_to_column` | Move a task to another kanban column |
 | `ticktick_get_project_folders` | List project folders |
 | `ticktick_create_project_folder` | Create a folder |
 | `ticktick_delete_project_folder` | Delete a folder |
+| `ticktick_move_project_to_folder` | Move a list into/out of a folder |
 
 </details>
 

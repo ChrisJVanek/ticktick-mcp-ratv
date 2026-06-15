@@ -17,6 +17,7 @@ import type {
   ProductivityStats,
   UserProfile,
   ProjectGroup,
+  Project,
   Column,
   Task,
   BatchCheckResponse,
@@ -299,6 +300,32 @@ export class TickTickV2Client {
     ]);
   }
 
+  /**
+   * Move a task into a different kanban column within its own project.
+   *
+   * The `/batch/task` update replaces the whole task, so we fetch the current
+   * task and resend it with only `columnId` changed to avoid dropping any fields.
+   */
+  async moveTaskToColumn(taskId: string, columnId: string): Promise<unknown> {
+    const task = await this.getTaskById(taskId);
+    if (!task) {
+      throw new Error(
+        `Task ${taskId} not found among active tasks. Only active (uncompleted) tasks can be moved between columns.`,
+      );
+    }
+    return this.request("POST", "/batch/task", {
+      add: [],
+      update: [{ ...task, columnId }],
+      delete: [],
+    });
+  }
+
+  /** Find an active task by id from the full account sync. */
+  private async getTaskById(taskId: string): Promise<Task | undefined> {
+    const data = await this.batchCheck();
+    return (data.syncTaskBean?.update ?? []).find((t) => t.id === taskId);
+  }
+
   // -------------------------------------------------------------------------
   // Kanban columns
   // -------------------------------------------------------------------------
@@ -353,6 +380,32 @@ export class TickTickV2Client {
       update: [],
       delete: [{ id: groupId }],
     });
+  }
+
+  /**
+   * Move a project (list) into a folder, or remove it from its folder.
+   *
+   * Pass a folder id to move the list into that folder, or `"NONE"` (the
+   * TickTick sentinel) / an empty string to take it out of any folder.
+   * The `/batch/project` update replaces the whole project, so we fetch the
+   * current project and resend it with only `groupId` changed.
+   */
+  async moveProjectToFolder(projectId: string, groupId: string): Promise<unknown> {
+    const project = await this.getProjectById(projectId);
+    if (!project) {
+      throw new Error(`Project ${projectId} not found.`);
+    }
+    return this.request("POST", "/batch/project", {
+      add: [],
+      update: [{ ...project, groupId: groupId || "NONE" }],
+      delete: [],
+    });
+  }
+
+  /** Find a project by id from the full account sync. */
+  private async getProjectById(projectId: string): Promise<Project | undefined> {
+    const data = await this.batchCheck();
+    return (data.projectProfiles ?? []).find((p) => p.id === projectId);
   }
 
   // -------------------------------------------------------------------------

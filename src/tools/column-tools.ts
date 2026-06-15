@@ -79,4 +79,30 @@ export function registerColumnTools(
       };
     },
   );
+
+  server.registerTool(
+    "ticktick_move_task_to_column",
+    {
+      title: "Move Task to Kanban Column",
+      description:
+        "Move a task into a different Kanban column within its project. Use ticktick_get_columns to find the destination column ID. The task keeps all its other fields.",
+      inputSchema: {
+        task_id: z.string().describe("Task ID to move"),
+        column_id: z
+          .string()
+          .describe("Destination column ID (from ticktick_get_columns)"),
+      },
+    },
+    async ({ task_id, column_id }) => {
+      await getV2().moveTaskToColumn(task_id, column_id);
+      return {
+        content: [
+          {
+            type: "text",
+            text: `Task ${task_id} moved to column ${column_id}.`,
+          },
+        ],
+      };
+    },
+  );
 }

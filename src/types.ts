@@ -44,6 +44,7 @@ export interface Task {
   pinned?: boolean;
   parentId?: string;
   childIds?: string[];
+  columnId?: string; // kanban column this task sits in
 }
 
 export interface CreateTaskInput {
