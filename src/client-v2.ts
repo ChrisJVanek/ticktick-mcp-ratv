@@ -52,6 +52,39 @@ function signonUrl(host: TickTickHost): string {
     : "https://api.ticktick.com/api/v2/user/signon?wc=true&remember=true";
 }
 
+/**
+ * The TickTick V2 API requires an `x-device` header identifying the client.
+ *
+ * Two things matter here:
+ *  1. The header must be present, or signon fails with HTTP 500 `access_forbidden`.
+ *  2. The `id` field must be a non-empty, stable device id. An empty or churning
+ *     id causes TickTick to reject signon with a *misleading* `username_password_not_match`
+ *     error (it treats the request as coming from an unrecognized/abusive device).
+ *
+ * So we build the header from a per-installation device id and reuse it on every
+ * request, including login.
+ */
+function buildXDevice(deviceId: string): string {
+  return JSON.stringify({
+    platform: "web",
+    os: "macOS",
+    device: "Chrome",
+    name: "",
+    version: 8090,
+    id: deviceId,
+    channel: "website",
+    campaign: "",
+    websocket: "",
+  });
+}
+
+/** Generate a TickTick-style device id (24 hex chars, like a Mongo ObjectId). */
+function generateDeviceId(): string {
+  let s = "";
+  for (let i = 0; i < 24; i++) s += Math.floor(Math.random() * 16).toString(16);
+  return s;
+}
+
 // ---------------------------------------------------------------------------
 // Client
 // ---------------------------------------------------------------------------
@@ -62,16 +95,20 @@ export class TickTickV2Client {
   private password: string;
   private host: TickTickHost;
   private api: string;
+  private xDevice: string;
 
   constructor(opts: {
     username: string;
     password: string;
     host?: TickTickHost;
+    deviceId?: string;
   }) {
     this.username = opts.username;
     this.password = opts.password;
     this.host = opts.host ?? "ticktick";
     this.api = v2BaseUrl(this.host);
+    // A stable, non-empty device id is required for signon to succeed.
+    this.xDevice = buildXDevice(opts.deviceId || generateDeviceId());
   }
 
   // -------------------------------------------------------------------------
@@ -86,7 +123,10 @@ export class TickTickV2Client {
   private async login(): Promise<void> {
     const res = await fetch(signonUrl(this.host), {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        "x-device": this.xDevice,
+      },
       body: JSON.stringify({
         username: this.username,
         password: this.password,
@@ -121,7 +161,7 @@ export class TickTickV2Client {
     const headers: Record<string, string> = {
       Cookie: `t=${this.sessionToken}`,
       "Content-Type": "application/json",
-      "x-device": '{"platform":"web","os":"macOS","device":"Chrome","name":"","version":6100,"id":"","channel":"website","campaign":"","websocket":""}',
+      "x-device": this.xDevice,
     };
 
     const res = await fetch(url, {

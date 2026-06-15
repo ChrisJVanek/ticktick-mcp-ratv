@@ -60,6 +60,7 @@ async function main() {
     username: config.username,
     password: config.password,
     host: config.host,
+    deviceId: config.deviceId,
   });
 
   const server = new McpServer({

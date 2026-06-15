@@ -29,6 +29,7 @@ export function loadConfig(): ServerConfig {
     // V2 session
     username: requireEnv("TICKTICK_USERNAME"),
     password: requireEnv("TICKTICK_PASSWORD"),
+    deviceId: process.env.TICKTICK_DEVICE_ID,
     // Host
     host: (process.env.TICKTICK_HOST as TickTickHost) ?? "ticktick",
   };

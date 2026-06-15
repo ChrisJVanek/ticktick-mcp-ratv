@@ -303,4 +303,6 @@ export interface ServerConfig {
   // V2 auth (session-based)
   username: string;
   password: string;
+  /** Stable device id for the V2 `x-device` header (required for signon). */
+  deviceId?: string;
 }
